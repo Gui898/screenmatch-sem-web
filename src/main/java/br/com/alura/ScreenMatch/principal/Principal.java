@@ -9,10 +9,7 @@ import br.com.alura.ScreenMatch.service.ConverteDados;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Principal {
@@ -47,40 +44,62 @@ public class Principal {
 
         System.out.println();
 
-        List<DadosEp> dadosEps = temporadas.stream()
-                .flatMap(t -> t.episodios().stream())
-                .collect(Collectors.toList());
+//        List<DadosEp> dadosEps = temporadas.stream()
+//                .flatMap(t -> t.episodios().stream())
+//                .collect(Collectors.toList());
+//
+//        System.out.println("Top 5 Episódios:");
+//        dadosEps.stream()
+//                .filter(e -> !e.avaliacao().equalsIgnoreCase("N/A"))
+//                .sorted(Comparator.comparing(DadosEp::avaliacao).reversed())
+//                .limit(5)
+//                .forEach(System.out::println);
+//
+//        System.out.println("\nEpisódios:");
 
-        System.out.println("Top 5 Episódios:");
-        dadosEps.stream()
-                .filter(e -> !e.avaliacao().equalsIgnoreCase("N/A"))
-                .sorted(Comparator.comparing(DadosEp::avaliacao).reversed())
-                .limit(5)
-                .forEach(System.out::println);
-
-        System.out.println("\nEpisódios:");
         List<Episodio> episodio = temporadas.stream()
                 .flatMap(t -> t.episodios().stream()
                         .map(d -> new Episodio(t.numeroTemp(), d)))
                         .collect(Collectors.toList());
 
         episodio.forEach(System.out::println);
+//
+//        System.out.println("Digite um trecho do título desejado");
+//        var trechoTitulo = scan.nextLine().toUpperCase();
+//
+//        Optional<Episodio> epBuscado = episodio.stream()
+//                .filter(e -> e.getTitulo().toUpperCase().contains(trechoTitulo))
+//                .findFirst();
+//
+//        if(epBuscado.isPresent()){
+//            System.out.println("Ep encontrado");
+//            System.out.println("Temporada: " + epBuscado.get().getTemporada());
+//        }else{
+//            System.out.println("Ep não encontrado");
+//        }
+//
+//        System.out.println("A partir de qual ano você deseja ver os episódios?");
+//        var ano = scan.nextInt();
+//        scan.nextLine();
+//
+//        LocalDate dataBusca = LocalDate.of(ano, 1, 1);
+//
+//        DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+//
+//        episodio.stream()
+//                .filter(e -> e.getDataDeLancamento() != null && e.getDataDeLancamento().isAfter(dataBusca))
+//                .forEach(e -> System.out.println(
+//                        "Temporada: " + e.getTemporada() +
+//                                " Episódio: " + e.getTitulo() +
+//                                " Data lançamento: " + e.getDataDeLancamento().format(formatador)
+//                ));
 
-        System.out.println("A partir de qual ano você deseja ver os episódios?");
-        var ano = scan.nextInt();
-        scan.nextLine();
+        Map<Integer, Double> avaliacaoPorTemp = episodio.stream()
+                .filter(e -> e.getAvaliacao() > 0.0)
+                .collect(Collectors.groupingBy(Episodio::getTemporada,
+                        Collectors.averagingDouble(Episodio::getAvaliacao)));
 
-        LocalDate dataBusca = LocalDate.of(ano, 1, 1);
-
-        DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-        episodio.stream()
-                .filter(e -> e.getDataDeLancamento() != null && e.getDataDeLancamento().isAfter(dataBusca))
-                .forEach(e -> System.out.println(
-                        "Temporada: " + e.getTemporada() +
-                                " Episódio: " + e.getTitulo() +
-                                " Data lançamento: " + e.getDataDeLancamento().format(formatador)
-                ));
+        System.out.println(avaliacaoPorTemp);
 
     }
 }
