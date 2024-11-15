@@ -101,5 +101,13 @@ public class Principal {
 
         System.out.println(avaliacaoPorTemp);
 
+        DoubleSummaryStatistics est = episodio.stream()
+                .filter(e -> e.getAvaliacao() > 0.0)
+                .collect(Collectors.summarizingDouble(Episodio::getAvaliacao));
+
+        System.out.println("Média total: " + est.getAverage());
+        System.out.println("Melhor Ep: " + est.getMax());
+        System.out.println("Pior Ep: " + est.getMin());
+
     }
 }
